@@ -1,4 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { gerarId } from '../util'
 
 export interface Item {
     id: string,
@@ -10,18 +11,18 @@ export interface Item {
 const initialState: Item[] = [];
 
 export const itemSlice = createSlice({
-    name: 'compraItem',
+    name: 'compraItens',
     initialState,
     reducers: {
         adicionarItem: (state) => {
             const novoItem: Item = {
-                id: gerarId(),
+                id: gerarId('itemCompra'),
                 nome: '',
                 valor: '0',
                 quantidade: 0,
             };
 
-            return [...state, novoItem];
+            state.push(novoItem);
         },
 
         removerItem: (state, action: PayloadAction<string>) => {
@@ -47,11 +48,6 @@ export const itemSlice = createSlice({
         },
     },
 });
-
-/** Gera um ID usando a data e hora atual */
-function gerarId() {
-    return Date.now().toString();
-}
 
 export const { adicionarItem, removerItem, alterarItem, limparLista } = itemSlice.actions;
 
