@@ -10,6 +10,9 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^1.8.1",
+    "@types/dinero.js": "^1.9.0",
+    "dinero.js": "^1.9.1",
     "react": "17.0.2",
     "react-native": "0.68.0"
   },
