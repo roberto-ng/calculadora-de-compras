@@ -9,13 +9,16 @@ import {
     View,
 } from 'react-native'
 import { Provider } from 'react-redux'
-import Home from './components/Home';
-import store from './redux/store'
+import Home from './components/Home'
+import { PersistGate } from 'redux-persist/integration/react'
+import { store, persistor } from './redux/store'
 
 const App = () => {
     return (
         <Provider store={store}>
-            <Home />
+            <PersistGate loading={null} persistor={persistor}>
+                <Home />
+            </PersistGate>
         </Provider>
     );
 };
