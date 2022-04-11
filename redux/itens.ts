@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { gerarId } from '../util'
 
 /** Um item da lista de compras */
 export interface Item {
@@ -15,14 +14,17 @@ export const itensSlice = createSlice({
     name: 'compraItens',
     initialState,
     reducers: {
-        adicionarItem: (state) => {
+        adicionarItem: (state, action: PayloadAction<Item>) => {
+            /*
             const novoItem: Item = {
                 id: gerarId('itemCompra'),
                 nome: '',
                 valor: '0',
                 quantidade: '0',
             };
+            */
 
+            const novoItem = action.payload;
             state.push(novoItem);
         },
 
@@ -48,7 +50,7 @@ export const itensSlice = createSlice({
             return [];
         },
 
-        carregarLista: (state, action: PayloadAction<Item[]>) => {
+        carregarLista: (_state, action: PayloadAction<Item[]>) => {
             const novaLista = [...action.payload];
             return novaLista;
         },

@@ -3,12 +3,18 @@ import { StyleSheet, View } from 'react-native'
 import { Button, FAB, Text, TextInput } from 'react-native-paper'
 import BottomSheet from '@gorhom/bottom-sheet'
 import TextInputMask from 'react-native-text-input-mask'
+import { useAppDispatch, useAppSelector } from '../redux/store'
+import { gerarId } from '../util'
+import { adicionarItem, Item } from '../redux/itens'
 
 const Home: FunctionComponent = () => {
+    const itens = useAppSelector(store => store.itens);
     const [isSheetOpen, setIsSheetOpen] = useState(false);
     const [novoItemNome, setNovoItemNome] = useState('');
-    const [novoItemValor, setNovoItemValor] = useState('');
+    const [novoItemValor, setNovoItemValor] = useState('R$ ');
     const [novoItemQtd, setNovoItemQtd] = useState('1');
+
+    const dispatch = useAppDispatch();
 
     const sheetRef = useRef<BottomSheet>(null);
     const snapPoints = useMemo(() => ['55%', '80%'], []);
@@ -18,7 +24,29 @@ const Home: FunctionComponent = () => {
     };
 
     const handleAdicionarItemPress = () => {
-        console.log(novoItemValor);
+        const id = gerarId('itemCompra');
+        // Transformar valor em um número válido
+        const valor = novoItemValor
+            .replace('R$', '')
+            .replace(',', '.')
+            .trim();
+
+        const item: Item = {
+            id,
+            valor,
+            nome: novoItemNome,
+            quantidade: novoItemQtd,
+        };
+
+        dispatch(adicionarItem(item));
+
+        // Resetar formulário
+        setNovoItemNome('');
+        setNovoItemValor('R$ ');
+        setNovoItemQtd('1');
+
+        // Fechar bottom sheet
+        sheetRef.current?.close();
     };
 
     const handleSheetChange = useCallback((index) => {
@@ -32,6 +60,12 @@ const Home: FunctionComponent = () => {
     return (
         <View style={styles.container}>
             <Text>Olá mundo</Text>
+
+            {itens.map(item => (
+                <View key={item.id}>
+                    <Text>{item.nome}</Text>
+                </View>
+            ))}
 
             <BottomSheet
                 ref={sheetRef}
