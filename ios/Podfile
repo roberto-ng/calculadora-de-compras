@@ -19,6 +19,8 @@ target 'calculadora_de_compras' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  pod 'react-native-text-input-mask', :path => '../node_modules/react-native-text-input-mask'
+
   target 'calculadora_de_comprasTests' do
     inherit! :complete
     # Pods for testing

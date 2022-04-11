@@ -2,9 +2,14 @@ import React, { FunctionComponent, useCallback, useMemo, useRef, useState } from
 import { StyleSheet, View } from 'react-native'
 import { Button, FAB, Text, TextInput } from 'react-native-paper'
 import BottomSheet from '@gorhom/bottom-sheet'
+import TextInputMask from 'react-native-text-input-mask'
 
 const Home: FunctionComponent = () => {
-    const [isSheetOpen, setisSheetOpen] = useState(false);
+    const [isSheetOpen, setIsSheetOpen] = useState(false);
+    const [novoItemNome, setNovoItemNome] = useState('');
+    const [novoItemValor, setNovoItemValor] = useState('');
+    const [novoItemQtd, setNovoItemQtd] = useState('1');
+
     const sheetRef = useRef<BottomSheet>(null);
     const snapPoints = useMemo(() => ['55%', '80%'], []);
 
@@ -12,11 +17,15 @@ const Home: FunctionComponent = () => {
         sheetRef.current?.snapToIndex(0);
     };
 
+    const handleAdicionarItemPress = () => {
+        console.log(novoItemValor);
+    };
+
     const handleSheetChange = useCallback((index) => {
         if (index >= 0) {
-            setisSheetOpen(true);
+            setIsSheetOpen(true);
         } else {
-            setisSheetOpen(false);
+            setIsSheetOpen(false);
         }
     }, []);
 
@@ -36,6 +45,8 @@ const Home: FunctionComponent = () => {
                         mode="outlined"
                         activeOutlineColor="crimson"
                         style={styles.textInput}
+                        value={novoItemNome}
+                        onChangeText={(texto) => setNovoItemNome(texto)}
                     />
 
                     <TextInput 
@@ -43,6 +54,15 @@ const Home: FunctionComponent = () => {
                         mode="outlined"
                         activeOutlineColor="crimson"
                         style={styles.textInput}
+                        keyboardType="number-pad"
+                        value={novoItemValor}
+                        onChangeText={(texto) => setNovoItemValor(texto)}
+                        render={(props: any) => (
+                            <TextInputMask
+                                {...props}
+                                mask="R$ [9999990],[00]"
+                            />
+                        )}
                     />
 
                     <TextInput 
@@ -50,6 +70,15 @@ const Home: FunctionComponent = () => {
                         mode="outlined"
                         activeOutlineColor="crimson"
                         style={styles.textInput}
+                        keyboardType="number-pad"
+                        value={novoItemQtd}
+                        onChangeText={(texto) => setNovoItemQtd(texto)}
+                        render={(props: any) => (
+                            <TextInputMask
+                                {...props}
+                                mask="[9999990]"
+                            />
+                        )}
                     />
 
                     <View style={{ alignItems: 'center' }}>
@@ -57,6 +86,7 @@ const Home: FunctionComponent = () => {
                             mode="contained"
                             color="crimson"
                             style={{ marginTop: 12 }}
+                            onPress={handleAdicionarItemPress}
                         >
                             Adicionar item
                         </Button>
