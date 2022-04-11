@@ -1,12 +1,12 @@
 import React, { FunctionComponent, useCallback, useMemo, useRef, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
-import { FAB, Text } from 'react-native-paper'
+import { Button, FAB, Text, TextInput } from 'react-native-paper'
 import BottomSheet from '@gorhom/bottom-sheet'
 
 const Home: FunctionComponent = () => {
     const [isSheetOpen, setisSheetOpen] = useState(false);
     const sheetRef = useRef<BottomSheet>(null);
-    const snapPoints = useMemo(() => ['25%', '50%'], []);
+    const snapPoints = useMemo(() => ['55%', '80%'], []);
 
     const handleFabPress = () => {
         sheetRef.current?.snapToIndex(0);
@@ -23,7 +23,36 @@ const Home: FunctionComponent = () => {
                 index={-1}
             >
                 <View style={styles.bottomSheetContainer}>
-                    <Text>Exemplo de texto</Text>
+                    <TextInput 
+                        label="Nome"
+                        mode="outlined"
+                        activeOutlineColor="crimson"
+                        style={styles.textInput}
+                    />
+
+                    <TextInput 
+                        label="Valor"
+                        mode="outlined"
+                        activeOutlineColor="crimson"
+                        style={styles.textInput}
+                    />
+
+                    <TextInput 
+                        label="Quantidade"
+                        mode="outlined"
+                        activeOutlineColor="crimson"
+                        style={styles.textInput}
+                    />
+
+                    <View style={{ alignItems: 'center' }}>
+                        <Button
+                            mode="contained"
+                            color="crimson"
+                            style={{ marginTop: 12 }}
+                        >
+                            Adicionar item
+                        </Button>
+                    </View>
                 </View>
             </BottomSheet>
 
@@ -53,7 +82,12 @@ const styles = StyleSheet.create({
 
     bottomSheetContainer: {
         flex: 1,
-        alignItems: 'center',
+    },
+
+    textInput: {
+        marginLeft: 12,
+        marginRight: 12,
+        marginTop: 5,
     },
 });
 

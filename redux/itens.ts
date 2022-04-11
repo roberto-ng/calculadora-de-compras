@@ -6,7 +6,7 @@ export interface Item {
     id: string,
     nome: string,
     valor: string,
-    quantidade: number,
+    quantidade: string,
 }
 
 const initialState: Item[] = [];
@@ -20,7 +20,7 @@ export const itensSlice = createSlice({
                 id: gerarId('itemCompra'),
                 nome: '',
                 valor: '0',
-                quantidade: 0,
+                quantidade: '0',
             };
 
             state.push(novoItem);
