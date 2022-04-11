@@ -10,8 +10,15 @@ const Home: FunctionComponent = () => {
 
     const handleFabPress = () => {
         sheetRef.current?.snapToIndex(0);
-        setisSheetOpen(true);
     };
+
+    const handleSheetChange = useCallback((index) => {
+        if (index >= 0) {
+            setisSheetOpen(true);
+        } else {
+            setisSheetOpen(false);
+        }
+    }, []);
 
     return (
         <View style={styles.container}>
@@ -21,6 +28,7 @@ const Home: FunctionComponent = () => {
                 ref={sheetRef}
                 snapPoints={snapPoints}
                 index={-1}
+                onChange={handleSheetChange}
             >
                 <View style={styles.bottomSheetContainer}>
                     <TextInput 
