@@ -7,4 +7,5 @@ Bastar ir informando o valor do item e a sua quantidade para saber quanto você 
 [Download disponível para Android](https://github.com/roberto-ng/calculadora-de-compras/releases/tag/release)
 
 ## Screenshots
-![Home page](/screenshots/home.png "")
+
+![Home page](/screenshots/home.jpg  "")
