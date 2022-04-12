@@ -1,12 +1,12 @@
 import React, { FunctionComponent, memo, useCallback, useMemo, useRef, useState } from 'react'
-import { ListRenderItem, StatusBar, StyleSheet, View } from 'react-native'
+import { Alert, ListRenderItem, StatusBar, StyleSheet, View } from 'react-native'
 import { Button, FAB, Divider, Text, TextInput, List, IconButton } from 'react-native-paper'
 import BottomSheet from '@gorhom/bottom-sheet'
 import TextInputMask from 'react-native-text-input-mask'
 import Dinero from 'dinero.js'
 import { useAppDispatch, useAppSelector } from '../redux/store'
 import { gerarId, getValorMonetario } from '../util'
-import { adicionarItem, alterarItem, Item, removerItem } from '../redux/itens'
+import { adicionarItem, alterarItem, Item, limparLista, removerItem } from '../redux/itens'
 import { FlatList } from 'react-native-gesture-handler'
 import ItemCompra from './ItemCompra'
 
@@ -125,6 +125,25 @@ const Home: FunctionComponent = () => {
         setIsSheetOpen(false);
     };
 
+    const handleLimparListaPress = () => {
+        Alert.alert(
+            "Limpar lista",
+            "Tem certeza?",
+            [
+                {
+                    text: "Cancelar",
+                    style: "cancel",
+                },
+                { 
+                    text: "Tenho certeza", 
+                    onPress: () => {
+                        dispatch(limparLista());
+                    },
+                },
+            ]
+        );
+    }
+
     const handleSheetChange = useCallback((index) => {
         if (index >= 0) {
             setIsSheetOpen(true);
@@ -150,10 +169,23 @@ const Home: FunctionComponent = () => {
                     />
                 )}
                 ListFooterComponent={() => (
-                    <List.Item
-                        title="Total"
-                        description={`Valor: ${valorFinal}`}
-                    />
+                    <>
+                        {(itens.length > 1) && (
+                            <>
+                                <List.Item
+                                    title="Total"
+                                    description={`Valor: ${valorFinal}`}
+                                />
+
+                                <Button
+                                    color="crimson"
+                                    onPress={handleLimparListaPress}
+                                >
+                                    Limpar Lista
+                                </Button>
+                            </>
+                        )}
+                    </>
                 )}
                 ListEmptyComponent={() => (
                     <View style={{ alignItems: 'center' }}>

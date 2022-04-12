@@ -40,11 +40,6 @@ export const itensSlice = createSlice({
         limparLista: () => {
             return [];
         },
-
-        carregarLista: (_state, action: PayloadAction<Item[]>) => {
-            const novaLista = [...action.payload];
-            return novaLista;
-        },
     },
 });
 
