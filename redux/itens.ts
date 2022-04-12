@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 /** Um item da lista de compras */
-export interface Item {
+export type Item = {
     id: string,
     nome: string,
     valor: string,
-    quantidade: string,
+    quantidade: number,
 }
 
 const initialState: Item[] = [];
@@ -15,15 +15,6 @@ export const itensSlice = createSlice({
     initialState,
     reducers: {
         adicionarItem: (state, action: PayloadAction<Item>) => {
-            /*
-            const novoItem: Item = {
-                id: gerarId('itemCompra'),
-                nome: '',
-                valor: '0',
-                quantidade: '0',
-            };
-            */
-
             const novoItem = action.payload;
             state.push(novoItem);
         },

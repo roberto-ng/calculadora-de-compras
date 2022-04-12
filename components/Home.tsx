@@ -1,11 +1,13 @@
-import React, { FunctionComponent, useCallback, useMemo, useRef, useState } from 'react'
-import { StyleSheet, View } from 'react-native'
-import { Button, FAB, Text, TextInput } from 'react-native-paper'
+import React, { FunctionComponent, memo, useCallback, useMemo, useRef, useState } from 'react'
+import { ListRenderItem, StyleSheet, View } from 'react-native'
+import { Button, FAB, Divider, Text, TextInput } from 'react-native-paper'
 import BottomSheet from '@gorhom/bottom-sheet'
 import TextInputMask from 'react-native-text-input-mask'
 import { useAppDispatch, useAppSelector } from '../redux/store'
-import { gerarId } from '../util'
+import { gerarId, getValorMonetario } from '../util'
 import { adicionarItem, Item } from '../redux/itens'
+import { FlatList } from 'react-native-gesture-handler'
+import ItemCompra from './ItemCompra'
 
 const Home: FunctionComponent = () => {
     const itens = useAppSelector(store => store.itens);
@@ -25,19 +27,14 @@ const Home: FunctionComponent = () => {
 
     const handleAdicionarItemPress = () => {
         const id = gerarId('itemCompra');
-        // Transformar valor em um número válido
-        const valor = novoItemValor
-            .replace('R$', '')
-            .replace(',', '.')
-            .trim();
-
         const item: Item = {
             id,
-            valor,
             nome: novoItemNome,
-            quantidade: novoItemQtd,
+            valor: novoItemValor,
+            quantidade: Number.parseInt(novoItemQtd),
         };
 
+        // Adicionar item
         dispatch(adicionarItem(item));
 
         // Resetar formulário
@@ -59,13 +56,16 @@ const Home: FunctionComponent = () => {
 
     return (
         <View style={styles.container}>
-            <Text>Olá mundo</Text>
-
-            {itens.map(item => (
-                <View key={item.id}>
-                    <Text>{item.nome}</Text>
-                </View>
-            ))}
+            <FlatList
+                data={itens}
+                renderItem={(props) => <ItemCompra {...props} />}
+                ListEmptyComponent={() => (
+                    <View style={{ alignItems: 'center' }}>
+                        <Text>Nenhum item na lista</Text>
+                    </View>
+                )}
+                ItemSeparatorComponent={Divider}
+            />
 
             <BottomSheet
                 ref={sheetRef}
