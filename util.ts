@@ -7,6 +7,7 @@ export function gerarId(prefixo: string) {
     return `${prefixo}${Date.now()}`;
 }
 
+/** Converte uma string para um valor monetário que pode ser usado em contas em segurança através da biblioteca Dinero.js */
 export function getValorMonetario(valor: string): Dinheiro {
     valor = valor.replace(',', '.');
 

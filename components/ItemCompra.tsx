@@ -8,11 +8,13 @@ type Props = {
     item: Item,
     index: number,
     onIconeEditarPress: (item: Item) => void,
+    onIconeDeletarPress: (id: string) => void,
 };
 
 const ItemCompra: FunctionComponent<Props> = ({
     item, 
     onIconeEditarPress,
+    onIconeDeletarPress,
 }) => {
     const descricao = useMemo(() => {
         const valor = getValorMonetario(item.valor);
@@ -37,10 +39,17 @@ const ItemCompra: FunctionComponent<Props> = ({
             title={item.nome}
             description={descricao}
             right={() => (
-                <IconButton 
-                    icon="pencil"
-                    onPress={() => onIconeEditarPress(item)}
-                />
+                <>
+                    <IconButton 
+                        icon="pencil"
+                        onPress={() => onIconeEditarPress(item)}
+                    />
+
+                    <IconButton
+                        icon="delete"
+                        onPress={() => onIconeDeletarPress(item.id)}
+                    />
+                </>
             )}
         />
     );

@@ -6,7 +6,7 @@ import TextInputMask from 'react-native-text-input-mask'
 import Dinero from 'dinero.js'
 import { useAppDispatch, useAppSelector } from '../redux/store'
 import { gerarId, getValorMonetario } from '../util'
-import { adicionarItem, alterarItem, Item } from '../redux/itens'
+import { adicionarItem, alterarItem, Item, removerItem } from '../redux/itens'
 import { FlatList } from 'react-native-gesture-handler'
 import ItemCompra from './ItemCompra'
 
@@ -51,9 +51,14 @@ const Home: FunctionComponent = () => {
         setIsSheetOpen(true);
         setModo('adicionar');
         setItemEditado(null);
+
+        // Resetar formulário
+        setNovoItemNome('');
+        setNovoItemValor('R$ ');
+        setNovoItemQtd('1');
     };
 
-    const handleIconeEditarPress = useCallback((item: Item) => {
+    const handleIconeAlterarPress = useCallback((item: Item) => {
         sheetRef.current?.snapToIndex(0);
         setIsSheetOpen(true);
         setModo('editar');
@@ -62,6 +67,15 @@ const Home: FunctionComponent = () => {
         setNovoItemNome(item.nome);
         setNovoItemValor(item.valor);
         setNovoItemQtd(item.quantidade.toString());
+    }, []);
+
+    const handleIconeDeletarPress = useCallback((id: string) => {
+        // Remover item
+        dispatch(removerItem(id));
+
+        setItemEditado(null);
+        // Fechar bottom sheet
+        sheetRef.current?.close();
     }, []);
 
     const handleAdicionarItemPress = () => {
@@ -80,11 +94,6 @@ const Home: FunctionComponent = () => {
 
         // Adicionar item
         dispatch(adicionarItem(item));
-
-        // Resetar formulário
-        setNovoItemNome('');
-        setNovoItemValor('R$ ');
-        setNovoItemQtd('1');
 
         // Fechar bottom sheet
         sheetRef.current?.close();
@@ -105,10 +114,7 @@ const Home: FunctionComponent = () => {
         // Alterar item
         dispatch(alterarItem(novoItem));
 
-        // Resetar formulário
-        setNovoItemNome('');
-        setNovoItemValor('R$ ');
-        setNovoItemQtd('1');
+        setItemEditado(null);
 
         // Fechar bottom sheet
         sheetRef.current?.close();
@@ -138,7 +144,8 @@ const Home: FunctionComponent = () => {
                 data={itens}
                 renderItem={(props) => (
                     <ItemCompra 
-                        onIconeEditarPress={handleIconeEditarPress}
+                        onIconeEditarPress={handleIconeAlterarPress}
+                        onIconeDeletarPress={handleIconeDeletarPress}
                         {...props} 
                     />
                 )}
