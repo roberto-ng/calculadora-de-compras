@@ -138,6 +138,10 @@ const Home: FunctionComponent = () => {
                     text: "Tenho certeza", 
                     onPress: () => {
                         dispatch(limparLista());
+                        
+                        setItemEditado(null);
+                        // Fechar bottom sheet
+                        sheetRef.current?.close();
                     },
                 },
             ]
@@ -170,8 +174,9 @@ const Home: FunctionComponent = () => {
                 )}
                 ListFooterComponent={() => (
                     <>
-                        {(itens.length > 1) && (
+                        {(itens.length != 0) && (
                             <>
+                                <Divider/>
                                 <List.Item
                                     title="Total"
                                     description={`Valor: ${valorFinal}`}
