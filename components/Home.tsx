@@ -1,8 +1,9 @@
 import React, { FunctionComponent, memo, useCallback, useMemo, useRef, useState } from 'react'
 import { ListRenderItem, StatusBar, StyleSheet, View } from 'react-native'
-import { Button, FAB, Divider, Text, TextInput } from 'react-native-paper'
+import { Button, FAB, Divider, Text, TextInput, List } from 'react-native-paper'
 import BottomSheet from '@gorhom/bottom-sheet'
 import TextInputMask from 'react-native-text-input-mask'
+import Dinero from 'dinero.js'
 import { useAppDispatch, useAppSelector } from '../redux/store'
 import { gerarId, getValorMonetario } from '../util'
 import { adicionarItem, Item } from '../redux/itens'
@@ -20,6 +21,24 @@ const Home: FunctionComponent = () => {
 
     const sheetRef = useRef<BottomSheet>(null);
     const snapPoints = useMemo(() => ['55%', '80%'], []);
+    
+    const valorFinal = useAppSelector(store => {
+        // Converter valores para valores monetários
+        const valores = store.itens.map(item => getValorMonetario(item.valor));
+        
+        let valorFinal = Dinero({
+            amount: 0,
+            currency: 'BRL',
+        });
+
+        for (const valor of valores) {
+            valorFinal = valorFinal.add(valor);
+        }
+
+        return valorFinal
+            .toFormat('$0.00')
+            .replace('.', ',');
+    });
 
     const handleFabPress = () => {
         sheetRef.current?.snapToIndex(0);
@@ -64,6 +83,12 @@ const Home: FunctionComponent = () => {
             <FlatList
                 data={itens}
                 renderItem={(props) => <ItemCompra {...props} />}
+                ListFooterComponent={() => (
+                    <List.Item
+                        title="Total"
+                        description={valorFinal}
+                    />
+                )}
                 ListEmptyComponent={() => (
                     <View style={{ alignItems: 'center' }}>
                         <Text>Nenhum item na lista</Text>
