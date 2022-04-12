@@ -6,9 +6,11 @@ import TextInputMask from 'react-native-text-input-mask'
 import Dinero from 'dinero.js'
 import { useAppDispatch, useAppSelector } from '../redux/store'
 import { gerarId, getValorMonetario } from '../util'
-import { adicionarItem, Item } from '../redux/itens'
+import { adicionarItem, alterarItem, Item } from '../redux/itens'
 import { FlatList } from 'react-native-gesture-handler'
 import ItemCompra from './ItemCompra'
+
+type Modo = 'editar' | 'adicionar';
 
 const Home: FunctionComponent = () => {
     const itens = useAppSelector(store => store.itens);
@@ -16,26 +18,30 @@ const Home: FunctionComponent = () => {
     const [novoItemNome, setNovoItemNome] = useState('');
     const [novoItemValor, setNovoItemValor] = useState('R$ ');
     const [novoItemQtd, setNovoItemQtd] = useState('1');
+    // Decide se a bottom sheet deve editar ou adicionar um item
+    const [modo, setModo] = useState<Modo>('adicionar');
+    // Item que vai ser editado
+    const [itemEditado, setItemEditado] = useState<Item | null>(null);
 
     const dispatch = useAppDispatch();
 
     const sheetRef = useRef<BottomSheet>(null);
     const snapPoints = useMemo(() => ['55%', '80%'], []);
     
-    const valorFinal = useAppSelector(store => {
+    const valorFinal = useAppSelector(({itens}) => {
         // Converter valores para valores monetários
-        const valores = store.itens.map(item => getValorMonetario(item.valor));
-        
-        let valorFinal = Dinero({
+        let valor = Dinero({
             amount: 0,
             currency: 'BRL',
         });
 
-        for (const valor of valores) {
-            valorFinal = valorFinal.add(valor);
+        for (const item of itens) {
+            const valorUnidade = getValorMonetario(item.valor);
+            const valorTotalItem = valorUnidade.multiply(item.quantidade);
+            valor = valor.add(valorTotalItem);
         }
 
-        return valorFinal
+        return valor
             .toFormat('$0.00')
             .replace('.', ',');
     });
@@ -43,19 +49,61 @@ const Home: FunctionComponent = () => {
     const handleFabPress = () => {
         sheetRef.current?.snapToIndex(0);
         setIsSheetOpen(true);
+        setModo('adicionar');
+        setItemEditado(null);
     };
+
+    const handleIconeEditarPress = useCallback((item: Item) => {
+        sheetRef.current?.snapToIndex(0);
+        setIsSheetOpen(true);
+        setModo('editar');
+        setItemEditado(item);
+
+        setNovoItemNome(item.nome);
+        setNovoItemValor(item.valor);
+        setNovoItemQtd(item.quantidade.toString());
+    }, []);
 
     const handleAdicionarItemPress = () => {
         const id = gerarId('itemCompra');
+        let quantidade = Number.parseInt(novoItemQtd);
+        if (isNaN(quantidade) || quantidade < 0 || novoItemQtd.length < 1) {
+            quantidade = 1;
+        }
+
         const item: Item = {
             id,
             nome: novoItemNome,
             valor: novoItemValor,
-            quantidade: Number.parseInt(novoItemQtd),
+            quantidade,
         };
 
         // Adicionar item
         dispatch(adicionarItem(item));
+
+        // Resetar formulário
+        setNovoItemNome('');
+        setNovoItemValor('R$ ');
+        setNovoItemQtd('1');
+
+        // Fechar bottom sheet
+        sheetRef.current?.close();
+    };
+
+    const handleAlterarItemPress = () => {
+        if (itemEditado == null) {
+            return;
+        }
+
+        const novoItem: Item = {
+            ...itemEditado,
+            nome: novoItemNome,
+            valor: novoItemValor,
+            quantidade: Number.parseInt(novoItemQtd),
+        }
+
+        // Alterar item
+        dispatch(alterarItem(novoItem));
 
         // Resetar formulário
         setNovoItemNome('');
@@ -88,7 +136,12 @@ const Home: FunctionComponent = () => {
 
             <FlatList
                 data={itens}
-                renderItem={(props) => <ItemCompra {...props} />}
+                renderItem={(props) => (
+                    <ItemCompra 
+                        onIconeEditarPress={handleIconeEditarPress}
+                        {...props} 
+                    />
+                )}
                 ListFooterComponent={() => (
                     <List.Item
                         title="Total"
@@ -159,14 +212,27 @@ const Home: FunctionComponent = () => {
                     />
 
                     <View style={{ alignItems: 'center' }}>
-                        <Button
-                            mode="contained"
-                            color="crimson"
-                            style={{ marginTop: 12 }}
-                            onPress={handleAdicionarItemPress}
-                        >
-                            Adicionar item
-                        </Button>
+                        {(modo === 'adicionar') && (
+                            <Button
+                                mode="contained"
+                                color="crimson"
+                                style={{ marginTop: 12 }}
+                                onPress={handleAdicionarItemPress}
+                            >
+                                Adicionar item
+                            </Button>
+                        )}
+
+                        {(modo === 'editar') && (
+                            <Button
+                                mode="contained"
+                                color="crimson"
+                                style={{ marginTop: 12 }}
+                                onPress={handleAlterarItemPress}
+                            >
+                                Alterar item
+                            </Button>
+                        )}
                     </View>
                 </View>
             </BottomSheet>

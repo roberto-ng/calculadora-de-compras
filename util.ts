@@ -8,13 +8,17 @@ export function gerarId(prefixo: string) {
 }
 
 export function getValorMonetario(valor: string): Dinheiro {
-    if (!valor.includes(',') && !valor.includes('.')) {
-        valor = `${valor},00`;
+    valor = valor.replace(',', '.');
+
+    if (!valor.includes('.')) {
+        valor = `${valor}.00`;
+    } else if (valor.split('.')[1].length < 2) {
+        // Adicionar um 0 a direita caso o número não possua 2 digitos depois da virgula (ex "R$1.3" se torna "R$1.30")
+        valor = `${valor}0`
     }
 
     const valorLimpo = valor
         .replace('R$', '')
-        .replace(',', '')
         .replace('.', '')
         .trim();
 
