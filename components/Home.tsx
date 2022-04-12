@@ -92,7 +92,7 @@ const Home: FunctionComponent = () => {
                 ListFooterComponent={() => (
                     <List.Item
                         title="Total"
-                        description={valorFinal}
+                        description={`Valor: ${valorFinal}`}
                     />
                 )}
                 ListEmptyComponent={() => (
