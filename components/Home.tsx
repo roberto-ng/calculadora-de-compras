@@ -1,5 +1,5 @@
 import React, { FunctionComponent, memo, useCallback, useMemo, useRef, useState } from 'react'
-import { ListRenderItem, StyleSheet, View } from 'react-native'
+import { ListRenderItem, StatusBar, StyleSheet, View } from 'react-native'
 import { Button, FAB, Divider, Text, TextInput } from 'react-native-paper'
 import BottomSheet from '@gorhom/bottom-sheet'
 import TextInputMask from 'react-native-text-input-mask'
@@ -56,6 +56,11 @@ const Home: FunctionComponent = () => {
 
     return (
         <View style={styles.container}>
+            <StatusBar 
+                barStyle="light-content" 
+                backgroundColor="crimson" 
+            />
+
             <FlatList
                 data={itens}
                 renderItem={(props) => <ItemCompra {...props} />}
