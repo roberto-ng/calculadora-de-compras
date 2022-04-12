@@ -1,6 +1,6 @@
 import React, { FunctionComponent, memo, useCallback, useMemo, useRef, useState } from 'react'
 import { ListRenderItem, StatusBar, StyleSheet, View } from 'react-native'
-import { Button, FAB, Divider, Text, TextInput, List } from 'react-native-paper'
+import { Button, FAB, Divider, Text, TextInput, List, IconButton } from 'react-native-paper'
 import BottomSheet from '@gorhom/bottom-sheet'
 import TextInputMask from 'react-native-text-input-mask'
 import Dinero from 'dinero.js'
@@ -42,6 +42,7 @@ const Home: FunctionComponent = () => {
 
     const handleFabPress = () => {
         sheetRef.current?.snapToIndex(0);
+        setIsSheetOpen(true);
     };
 
     const handleAdicionarItemPress = () => {
@@ -63,6 +64,11 @@ const Home: FunctionComponent = () => {
 
         // Fechar bottom sheet
         sheetRef.current?.close();
+    };
+
+    const fecharBottomSheet = () => {
+        sheetRef.current?.close();
+        setIsSheetOpen(false);
     };
 
     const handleSheetChange = useCallback((index) => {
@@ -104,6 +110,13 @@ const Home: FunctionComponent = () => {
                 onChange={handleSheetChange}
             >
                 <View style={styles.bottomSheetContainer}>
+                    <View style={{ alignItems: 'flex-end' }}>
+                        <IconButton 
+                            icon="close"
+                            onPress={fecharBottomSheet}
+                        />
+                    </View>
+
                     <TextInput 
                         label="Nome"
                         mode="outlined"
