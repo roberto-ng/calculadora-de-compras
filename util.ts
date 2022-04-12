@@ -15,7 +15,9 @@ export function getValorMonetario(valor: string): Dinheiro {
         valor = `${valor}.00`;
     } else if (valor.split('.')[1].length < 2) {
         // Adicionar um 0 a direita caso o número não possua 2 digitos depois da virgula (ex "R$1.3" se torna "R$1.30")
-        valor = `${valor}0`
+        while (valor.split('.')[1].length < 2) {
+            valor = `${valor}0`
+        }
     }
 
     const valorLimpo = valor

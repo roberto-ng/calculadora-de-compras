@@ -70,12 +70,30 @@ const Home: FunctionComponent = () => {
     }, []);
 
     const handleIconeDeletarPress = useCallback((id: string) => {
-        // Remover item
-        dispatch(removerItem(id));
+        const aoConfirmar = () => {
+            // Remover item
+            dispatch(removerItem(id));
 
-        setItemEditado(null);
-        // Fechar bottom sheet
-        sheetRef.current?.close();
+            setItemEditado(null);
+            // Fechar bottom sheet
+            sheetRef.current?.close();
+        };
+
+        // Pedir confirmação do usuário
+        Alert.alert(
+            'Remover item',
+            'Tem certeza?',
+            [
+                {
+                    text: 'Cancelar',
+                    style: 'cancel',
+                },
+                { 
+                    text: 'Tenho certeza', 
+                    onPress: aoConfirmar,
+                },
+            ]
+        );
     }, []);
 
     const handleAdicionarItemPress = () => {
@@ -126,6 +144,15 @@ const Home: FunctionComponent = () => {
     };
 
     const handleLimparListaPress = () => {
+        const aoConfirmar = () => {
+            dispatch(limparLista());
+            
+            setItemEditado(null);
+            // Fechar bottom sheet
+            sheetRef.current?.close();
+        };
+
+        // Pedir confirmação do usuário
         Alert.alert(
             "Limpar lista",
             "Tem certeza?",
@@ -136,13 +163,7 @@ const Home: FunctionComponent = () => {
                 },
                 { 
                     text: "Tenho certeza", 
-                    onPress: () => {
-                        dispatch(limparLista());
-                        
-                        setItemEditado(null);
-                        // Fechar bottom sheet
-                        sheetRef.current?.close();
-                    },
+                    onPress: aoConfirmar,
                 },
             ]
         );
