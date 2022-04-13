@@ -28,13 +28,13 @@ const Home: FunctionComponent = () => {
     const sheetRef = useRef<BottomSheet>(null);
     const snapPoints = useMemo(() => ['55%', '80%'], []);
     
+    // Recalcular valor total toda vez que a lista for alterada
     const valorFinal = useAppSelector(({itens}) => {
-        // Converter valores para valores monetários
         let valor = Dinero({
             amount: 0,
             currency: 'BRL',
         });
-
+        
         for (const item of itens) {
             const valorUnidade = getValorMonetario(item.valor);
             const valorTotalItem = valorUnidade.multiply(item.quantidade);
