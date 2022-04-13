@@ -26,15 +26,10 @@ export const itensSlice = createSlice({
 
         alterarItem: (state, action: PayloadAction<Item>) => {
             const novoItem = action.payload;
-
+            // Achar o índice do item
+            const i = state.findIndex(item => item.id === novoItem.id);
             // Substituir item pela nova versão
-            return state.map(item => {
-                if (item.id === novoItem.id) {
-                    return novoItem;
-                } else {
-                    return item;
-                }
-            });
+            state[i] = novoItem;
         },
 
         limparLista: () => {
