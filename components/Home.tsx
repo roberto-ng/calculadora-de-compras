@@ -5,7 +5,7 @@ import BottomSheet from '@gorhom/bottom-sheet'
 import TextInputMask from 'react-native-text-input-mask'
 import Dinero from 'dinero.js'
 import { useAppDispatch, useAppSelector } from '../redux/store'
-import { gerarId, getValorMonetario } from '../util'
+import { gerarId, getValorMonetario, pedirConfirmacao } from '../util'
 import { adicionarItem, alterarItem, Item, limparLista, removerItem } from '../redux/itens'
 import { FlatList } from 'react-native-gesture-handler'
 import ItemCompra from './ItemCompra'
@@ -46,22 +46,34 @@ const Home: FunctionComponent = () => {
             .replace('.', ',');
     });
 
-    const handleFabPress = () => {
-        sheetRef.current?.snapToIndex(0);
-        setIsSheetOpen(true);
-        setModo('adicionar');
-        setItemEditado(null);
-
-        // Resetar formulário
+    const limparFormulario = () => {
         setNovoItemNome('');
         setNovoItemValor('R$ ');
         setNovoItemQtd('1');
     };
 
-    const handleIconeAlterarPress = useCallback((item: Item) => {
+    const fecharBottomSheet = () => {
+        sheetRef.current?.close();
+        setIsSheetOpen(false);
+    };
+
+    const abrirBottomSheet = () => {
         sheetRef.current?.snapToIndex(0);
         setIsSheetOpen(true);
+    };
+
+    const handleFabPress = () => {
+        setModo('adicionar');
+        abrirBottomSheet();
+        setItemEditado(null);
+
+        // Resetar formulário
+        limparFormulario();
+    };
+
+    const handleIconeAlterarPress = useCallback((item: Item) => {
         setModo('editar');
+        abrirBottomSheet();
         setItemEditado(item);
 
         setNovoItemNome(item.nome);
@@ -70,30 +82,14 @@ const Home: FunctionComponent = () => {
     }, []);
 
     const handleIconeDeletarPress = useCallback((id: string) => {
-        const aoConfirmar = () => {
+        // Pedir confirmação do usuário
+        pedirConfirmacao('Remover item da lista', () => {
             // Remover item
             dispatch(removerItem(id));
 
             setItemEditado(null);
-            // Fechar bottom sheet
-            sheetRef.current?.close();
-        };
-
-        // Pedir confirmação do usuário
-        Alert.alert(
-            'Remover item',
-            'Tem certeza?',
-            [
-                {
-                    text: 'Cancelar',
-                    style: 'cancel',
-                },
-                { 
-                    text: 'Tenho certeza', 
-                    onPress: aoConfirmar,
-                },
-            ]
-        );
+            fecharBottomSheet();
+        });
     }, []);
 
     const handleAdicionarItemPress = () => {
@@ -113,8 +109,7 @@ const Home: FunctionComponent = () => {
         // Adicionar item
         dispatch(adicionarItem(item));
 
-        // Fechar bottom sheet
-        sheetRef.current?.close();
+        fecharBottomSheet();
     };
 
     const handleAlterarItemPress = () => {
@@ -133,49 +128,18 @@ const Home: FunctionComponent = () => {
         dispatch(alterarItem(novoItem));
 
         setItemEditado(null);
-
-        // Fechar bottom sheet
-        sheetRef.current?.close();
-    };
-
-    const fecharBottomSheet = () => {
-        sheetRef.current?.close();
-        setIsSheetOpen(false);
+        fecharBottomSheet();
     };
 
     const handleLimparListaPress = () => {
-        const aoConfirmar = () => {
+        // Pedir confirmação do usuário
+        pedirConfirmacao('Limpar lista', () => {
             dispatch(limparLista());
             
             setItemEditado(null);
-            // Fechar bottom sheet
-            sheetRef.current?.close();
-        };
-
-        // Pedir confirmação do usuário
-        Alert.alert(
-            "Limpar lista",
-            "Tem certeza?",
-            [
-                {
-                    text: "Cancelar",
-                    style: "cancel",
-                },
-                { 
-                    text: "Tenho certeza", 
-                    onPress: aoConfirmar,
-                },
-            ]
-        );
+            fecharBottomSheet();
+        });
     }
-
-    const handleSheetChange = useCallback((index) => {
-        if (index >= 0) {
-            setIsSheetOpen(true);
-        } else {
-            setIsSheetOpen(false);
-        }
-    }, []);
 
     return (
         <View style={styles.container}>
@@ -225,7 +189,6 @@ const Home: FunctionComponent = () => {
                 ref={sheetRef}
                 snapPoints={snapPoints}
                 index={-1}
-                onChange={handleSheetChange}
             >
                 <View style={styles.bottomSheetContainer}>
                     <View style={{ alignItems: 'flex-end' }}>

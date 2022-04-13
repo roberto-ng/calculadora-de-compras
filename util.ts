@@ -1,4 +1,5 @@
 import Dinero from 'dinero.js'
+import { Alert } from 'react-native'
 
 export type Dinheiro = Dinero.Dinero;
 
@@ -34,4 +35,22 @@ export function getValorMonetario(valor: string): Dinheiro {
         amount: valorConvertido,
         currency: 'BRL'
     });
+}
+
+/** Mostra um alerta que pede a confirmação do usuário */
+export function pedirConfirmacao(titulo: string, handlePress: () => void) {
+    Alert.alert(
+        titulo,
+        'Tem certeza?',
+        [
+            {
+                text: 'Cancelar',
+                style: 'cancel',
+            },
+            { 
+                text: 'Tenho certeza', 
+                onPress: handlePress,
+            },
+        ]
+    );
 }
